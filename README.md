@@ -1,5 +1,9 @@
 # CryptalearnNode
 
+**CryptaLearn Node** is a distributed coordination backend built in Elixir that orchestrates privacy-preserving federated learning across multiple client nodes running the [CryptaLearn](https://github.com/chizy7/CryptaLearn) OCaml library. It serves as the central hub for secure model aggregation, privacy budget management, and federated training coordination.
+
+## Quick Start
+
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
