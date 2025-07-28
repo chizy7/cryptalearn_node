@@ -1,0 +1,6 @@
+# Ignore sensitive configuration files
+*.secret.exs
+
+# Ignore local environment-specific configuration files
+dev.local.exs
+test.local.exs

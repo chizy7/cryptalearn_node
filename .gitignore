@@ -28,3 +28,6 @@ cryptalearn_node-*.tar
 # OS files
 .DS_Store
 Thumbs.db
+
+# Environment variables
+.env 

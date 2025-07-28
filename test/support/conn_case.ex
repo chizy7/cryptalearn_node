@@ -32,7 +32,21 @@ defmodule CryptalearnNodeWeb.ConnCase do
   end
 
   setup tags do
-    CryptalearnNode.DataCase.setup_sandbox(tags)
+    pid = CryptalearnNode.DataCase.setup_sandbox(tags)
+    
+    # Allow the test process to use the connection
+    Ecto.Adapters.SQL.Sandbox.allow(CryptalearnNode.Repo, self(), pid)
+    
+    # For tests involving GenServers that need DB access
+    if registry_pid = Process.whereis(CryptalearnNode.Nodes.Registry) do
+      Ecto.Adapters.SQL.Sandbox.allow(CryptalearnNode.Repo, registry_pid, pid)
+    end
+    
+    # Set the pool to shared mode if the test is not running async
+    if not tags[:async] do
+      Ecto.Adapters.SQL.Sandbox.mode(CryptalearnNode.Repo, {:shared, pid})
+    end
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

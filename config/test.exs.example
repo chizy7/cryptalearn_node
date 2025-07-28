@@ -17,7 +17,7 @@ config :cryptalearn_node, CryptalearnNode.Repo,
 # you can enable the server option below.
 config :cryptalearn_node, CryptalearnNodeWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: System.get_env("TEST_SECRET_KEY_BASE") || "4b7zvcRzlxjEMkkFHYDFkFTG5xd2LPLOLH/9P0046DJ8P6qtbjgn+rUSPEsXz/OP",
+  secret_key_base: System.get_env("TEST_SECRET_KEY_BASE") || "<YOUR_SECRET_KEY_HERE>",
   server: false
 
 # In test we don't send emails
