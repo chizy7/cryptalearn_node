@@ -8,14 +8,30 @@ defmodule CryptalearnNode.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      # Start the Telemetry supervisor
       CryptalearnNodeWeb.Telemetry,
+
+      # Start the Ecto repository
       CryptalearnNode.Repo,
-      {DNSCluster, query: Application.get_env(:cryptalearn_node, :dns_cluster_query) || :ignore},
+
+      # Start the PubSub system
       {Phoenix.PubSub, name: CryptalearnNode.PubSub},
+
       # Start the Finch HTTP client for sending emails
       {Finch, name: CryptalearnNode.Finch},
-      # Start a worker by calling: CryptalearnNode.Worker.start_link(arg)
-      # {CryptalearnNode.Worker, arg},
+
+      # Start the Registry for node sessions
+      {Registry, keys: :unique, name: CryptalearnNode.NodeRegistry},
+
+      # Start the DynamicSupervisor for session processes
+      {DynamicSupervisor, strategy: :one_for_one, name: CryptalearnNode.Nodes.SessionSupervisor},
+
+      # Start the Node Registry GenServer
+      CryptalearnNode.Nodes.Registry,
+
+      # Start DNS cluster for distributed deployment
+      {DNSCluster, query: Application.get_env(:cryptalearn_node, :dns_cluster_query) || :ignore},
+
       # Start to serve requests, typically the last entry
       CryptalearnNodeWeb.Endpoint
     ]

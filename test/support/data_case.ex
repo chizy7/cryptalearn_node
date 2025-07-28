@@ -36,8 +36,22 @@ defmodule CryptalearnNode.DataCase do
   Sets up the sandbox based on the test tags.
   """
   def setup_sandbox(tags) do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(CryptalearnNode.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    # Ensure application is started before trying to access repo
+    {:ok, _} = Application.ensure_all_started(:cryptalearn_node)
+    
+    # Use try/rescue to handle potential database connection issues
+    try do
+      pid = Ecto.Adapters.SQL.Sandbox.start_owner!(CryptalearnNode.Repo, shared: not tags[:async])
+      on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+      pid
+    rescue
+      e in RuntimeError ->
+        IO.puts("Error starting database connection: #{inspect(e)}")
+        # Fall back to manual checkout
+        :ok = Ecto.Adapters.SQL.Sandbox.checkout(CryptalearnNode.Repo)
+        on_exit(fn -> Ecto.Adapters.SQL.Sandbox.checkin(CryptalearnNode.Repo) end)
+        nil
+    end
   end
 
   @doc """
